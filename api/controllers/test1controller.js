@@ -1,6 +1,5 @@
 'use strict';
 
-
 var mongoose = require('mongoose'),
   Task = mongoose.model('Tasks');
 
@@ -13,6 +12,7 @@ exports.list_all_tasks = function(req, res) {
 };
 
 exports.list_own_tasks = function(req, res) {
+  console.log(req.user.name);
     Task.find({userId: req.user._id}, function(err, task) {
       if (err)
         res.send(err);

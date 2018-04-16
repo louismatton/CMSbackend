@@ -57,7 +57,7 @@ module.exports = function (app) {
         .post(authController.isAuthenticated, todoList.create_a_task);
 
     app.route('/owntasks')
-        .get(authController.isAuthenticated, todoList.list_own_tasks)
+        .get(requireAuth, todoList.list_own_tasks)
 
 
 
