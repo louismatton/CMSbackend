@@ -35,6 +35,7 @@ const jwtOptions = {
 const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {  
   User.findById(payload._id, function(err, user) {
     if (err) { return done(err, false); }
+    console.log("passport.js setting up jwt login strategy");
     console.log(payload);
     if (user) {
       done(null, user);

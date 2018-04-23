@@ -7,12 +7,13 @@ exports.list_all_tasks = function(req, res) {
   Task.find({}, function(err, task) {
     if (err)
       res.send(err);
+      console.log("test1controller list_all"+task)
     res.json(task);
   });
 };
 
 exports.list_own_tasks = function(req, res) {
-  console.log(req.user.name);
+  // console.log("test1controller list_all"+req.user.name);
     Task.find({userId: req.user._id}, function(err, task) {
       if (err)
         res.send(err);
