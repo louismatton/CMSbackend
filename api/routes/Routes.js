@@ -70,7 +70,7 @@ module.exports = function (app) {
         .get(requireAuth, userController.list_all_users);
 
     app.route('/website')
-        .get(requireAuth, websiteController.list_own_websites)
+        .get(requireAuth, websiteController.list_own_website)
         // .get(authController.isAuthenticated, todoList.list_all_tasks)
         .post(requireAuth, websiteController.create_a_website);
     
@@ -80,4 +80,6 @@ module.exports = function (app) {
     app.route('/website/editpagetitle')
         .post(requireAuth, websiteController.change_page_title);
     
+    app.route('/website/addpage')
+        .post(requireAuth, websiteController.add_page);
 };

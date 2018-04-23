@@ -13,9 +13,9 @@ exports.list_all_websites = function (req, res) {
   });
 };
 
-exports.list_own_websites = function (req, res) {
+exports.list_own_website = function (req, res) {
   // console.log("websitecontroller list_own"+req.user.name);
-  Website.find({
+  Website.findOne({
     userId: req.user._id
   }, function (err, website) {
     if (err)
@@ -150,6 +150,48 @@ exports.update_a_post = function (req, res) {
         });
       }
     )
+  });
+}
+
+exports.add_page = function (req, res) {
+  console.log('addpage');
+  Website.findOne({
+    userId: req.user._id
+  }, function (err, currentWebsite) {
+    if (err)
+      res.send(err);
+    let tel=1;
+
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+      tel++;
+        callback();
+      },
+      //functie na async
+      (err)=>{
+        if (err) res.send(err);
+      
+        let newPage = {
+        'pageTitle': req.body.pageTitle,
+        'pageOrder': tel
+      };
+      Website.findOneAndUpdate({
+        userId: req.user._id,
+      }, {
+        $push: {
+          pages: newPage
+        }
+      },{new:true}).exec((err, changedWebsite) => {
+        if (err) console.log(err);
+        // console.log(changedWebsite);
+        // console.log(changedWebsite.pages[0].posts);
+        res.json(changedWebsite);
+      });
+
+      }
+
+
+    );
+
   });
 }
 
