@@ -82,22 +82,31 @@ exports.update_a_post = function (req, res) {
   //post per order, title, text, (type en fotos) worden meegegeven
   console.log("websitecontroller update_post");
   // console.log(req.user);
-  console.log(req.body);
+  // console.log(req.body);
 
   Website.findOne({
     userId: req.user._id
   }, function (err, currentWebsite) {
     if (err) res.send(err);
-    let newTempPost, currentPosts, juistetel;
+    let newTempPost, juistetel;
+    var currentPosts = Array();
     let tel;
     async.each(currentWebsite.pages, (currentPage, callback) => {
-        currentPosts = currentPage.posts;
+        // if (currentPage.pageOrder = req.body.pageOrder) {
+        //   currentPosts = currentPage.posts;
+        //   console.log("juist", currentPosts);
+
+        // }
+        // console.log(currentPage.posts);
+
+        // console.log("eerste async ", currentPosts);
         tel = -1;
-        async.each(currentPosts, (currentPost, callback) => {
+        async.each(currentPage.posts, (currentPost, callback) => {
             tel++;
+            currentPosts.push(currentPost);
             if (currentPost.postOrder == req.body.postOrder) {
               // console.log(currentPost);
-
+              console.log("tel:", tel);
               juistetel = tel;
               let body = req.body;
               if (body.postTitle != null) {
@@ -114,7 +123,7 @@ exports.update_a_post = function (req, res) {
               // console.log(Date.now());
               currentPost.postDate = Date.now();
 
-              console.log("new", currentPost);
+              // console.log("new", currentPost);
               newTempPost = currentPost;
             }
             callback();
@@ -130,8 +139,10 @@ exports.update_a_post = function (req, res) {
       //na async.each
       (err) => {
         if (err) res.json(err);
-        // console.log('buitenste async gedaan');
+        console.log(currentPosts);
         currentPosts.splice(juistetel, 1);
+        console.log("juistetel:", juistetel);
+        console.log("2", currentPosts);
 
         currentPosts.push(newTempPost);
         // console.log(currentPosts);
@@ -159,36 +170,34 @@ exports.add_post = function (req, res) {
   console.log("websitecontroller add_post");
   // console.log(req.user);
   // console.log(req.body);
-  
+
   Website.findOne({
     userId: req.user._id
   }, function (err, currentWebsite) {
     if (err) res.send(err);
     var newTempPost, currentPosts, juistetel;
+    juistetel = 1;
     let tel;
     async.each(currentWebsite.pages, (currentPage, callback) => {
-      if(currentPage.pageOrder==req.body.pageOrder){
+        if (currentPage.pageOrder == req.body.pageOrder) {
 
-      
-        currentPosts = currentPage.posts;
-        console.log(currentPage.posts);
-        tel = 0;
-        async.each(currentPosts, (currentPost, callback) => {
-          //async nie nodig?////////////////////////////////////////////////////////////?////////////////////////////////////////////////////////////
-            tel++;
-            juistetel = tel;
 
-            callback();
-          },
-          //na async.each middel
-          (err) => {
-            if (err) res.json(err);
-            // console.log('binnenste async gedaan');
-          }         
-          //async nie nodig?////////////////////////////////////////////////////////////?////////////////////////////////////////////////////////////
+          currentPosts = currentPage.posts;
+          // console.log(currentPage.posts);
+          tel = 1;
+          async.each(currentPosts, (currentPost, callback) => {
+              tel++;
+              juistetel = tel;
 
-        );
-      } 
+              callback();
+            },
+            //na async.each middel
+            (err) => {
+              if (err) res.json(err);
+              // console.log('binnenste async gedaan');
+            }
+          );
+        }
         callback();
       },
       //na async.each
@@ -204,7 +213,7 @@ exports.add_post = function (req, res) {
           'postOrder': juistetel++
         };
         currentPosts.push(newPost);
-        console.log(currentPosts);
+        // console.log(currentPosts);
         Website.findOneAndUpdate({
           userId: req.user._id,
           "pages.pageOrder": req.body.pageOrder
