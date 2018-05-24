@@ -77,9 +77,66 @@ exports.update_a_website = function (req, res) {
   });
 };
 
+exports.delete_post = function (req, res) {
+  // delete post en verander postOrders
+  console.log("websitecontroller delete_post");
+
+  Website.findOne({
+    userId: req.user._id
+  }, function (err, currentWebsite) {
+    if (err) res.send(err);
+    var currentPosts = Array();
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+      if(currentPage.pageOrder==req.body.pageOrder){
+
+        async.each(currentPage.posts, (currentPost, callback) => {
+
+            if (currentPost.postOrder > req.body.postOrder) {
+              currentPost.postOrder--;
+              currentPosts.push(currentPost);
+
+            }
+            if (currentPost.postOrder < req.body.postOrder) {
+              currentPosts.push(currentPost);
+            }
+            callback();
+          },
+          //na async.each middel
+          (err) => {
+            if (err) res.json(err);
+            // console.log('binnenste async gedaan');
+          }
+        );
+      }
+        callback();
+      },
+      //na async.each
+      (err) => {
+        if (err) res.json(err);
+        Website.findOneAndUpdate({
+          userId: req.user._id,
+          "pages.pageOrder": req.body.pageOrder
+        }, {
+          "pages.$.createdDate": Date.now(),
+          "pages.$.posts": currentPosts
+        }, {
+          new: true
+        }).exec((err, changedWebsite) => {
+          if (err) console.log(err);
+          console.log(changedWebsite);
+          // console.log(changedWebsite.pages[0].posts);
+          res.json(changedWebsite);
+        });
+      }
+    )
+  });
+
+};
+
 
 exports.update_a_post = function (req, res) {
   //post per order, title, text, (type en fotos) worden meegegeven
+  //controle juiste pagina!!!!
   console.log("websitecontroller update_post");
   // console.log(req.user);
   // console.log(req.body);
@@ -92,15 +149,10 @@ exports.update_a_post = function (req, res) {
     var currentPosts = Array();
     let tel;
     async.each(currentWebsite.pages, (currentPage, callback) => {
-        // if (currentPage.pageOrder = req.body.pageOrder) {
-        //   currentPosts = currentPage.posts;
-        //   console.log("juist", currentPosts);
-
-        // }
-        // console.log(currentPage.posts);
-
-        // console.log("eerste async ", currentPosts);
         tel = -1;
+        if(currentPage.pageOrder==req.body.pageOrder){
+
+        
         async.each(currentPage.posts, (currentPost, callback) => {
             tel++;
             currentPosts.push(currentPost);
@@ -134,6 +186,7 @@ exports.update_a_post = function (req, res) {
             // console.log('binnenste async gedaan');
           }
         );
+      }
         callback();
       },
       //na async.each
