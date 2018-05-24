@@ -57,8 +57,6 @@ module.exports = function (app) {
         // .get(authController.isAuthenticated, todoList.list_all_tasks)
         .post(authController.isAuthenticated, todoList.create_a_task);
 
-    app.route('/owntasks')
-        .get(requireAuth, todoList.list_own_tasks)
 
     app.route('/tasks/:taskId')
         .get(todoList.read_a_task)
@@ -71,10 +69,10 @@ module.exports = function (app) {
 
     app.route('/website')
         .get(requireAuth, websiteController.list_own_website)
-        // .get(authController.isAuthenticated, todoList.list_all_tasks)
         .post(requireAuth, websiteController.create_a_website);
     
     app.route('/website/editpost')
+    // .get(requireAuth)
         .post(requireAuth, websiteController.update_a_post);
     
     app.route('/website/editpagetitle')
@@ -82,4 +80,7 @@ module.exports = function (app) {
     
     app.route('/website/addpage')
         .post(requireAuth, websiteController.add_page);
+
+    app.route('/website/addpost')
+        .post(requireAuth, websiteController.add_post);
 };
