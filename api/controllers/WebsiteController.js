@@ -87,27 +87,27 @@ exports.delete_post = function (req, res) {
     if (err) res.send(err);
     var currentPosts = Array();
     async.each(currentWebsite.pages, (currentPage, callback) => {
-      if(currentPage.pageOrder==req.body.pageOrder){
+        if (currentPage.pageOrder == req.body.pageOrder) {
 
-        async.each(currentPage.posts, (currentPost, callback) => {
+          async.each(currentPage.posts, (currentPost, callback) => {
 
-            if (currentPost.postOrder > req.body.postOrder) {
-              currentPost.postOrder--;
-              currentPosts.push(currentPost);
+              if (currentPost.postOrder > req.body.postOrder) {
+                currentPost.postOrder--;
+                currentPosts.push(currentPost);
 
+              }
+              if (currentPost.postOrder < req.body.postOrder) {
+                currentPosts.push(currentPost);
+              }
+              callback();
+            },
+            //na async.each middel
+            (err) => {
+              if (err) res.json(err);
+              // console.log('binnenste async gedaan');
             }
-            if (currentPost.postOrder < req.body.postOrder) {
-              currentPosts.push(currentPost);
-            }
-            callback();
-          },
-          //na async.each middel
-          (err) => {
-            if (err) res.json(err);
-            // console.log('binnenste async gedaan');
-          }
-        );
-      }
+          );
+        }
         callback();
       },
       //na async.each
@@ -150,43 +150,43 @@ exports.update_a_post = function (req, res) {
     let tel;
     async.each(currentWebsite.pages, (currentPage, callback) => {
         tel = -1;
-        if(currentPage.pageOrder==req.body.pageOrder){
+        if (currentPage.pageOrder == req.body.pageOrder) {
 
-        
-        async.each(currentPage.posts, (currentPost, callback) => {
-            tel++;
-            currentPosts.push(currentPost);
-            if (currentPost.postOrder == req.body.postOrder) {
-              // console.log(currentPost);
-              console.log("tel:", tel);
-              juistetel = tel;
-              let body = req.body;
-              if (body.postTitle != null) {
-                currentPost.postTitle = body.postTitle;
-              }
-              if (body.postText != null) {
-                currentPost.postText = body.postText;
-              }
-              if (body.postPhotos != null) {
-                currentPost.postType = body.postType;
-                currentPost.postPhotos = body.postPhotos;
-                //problemen voor later?
-              }
-              // console.log(Date.now());
-              currentPost.postDate = Date.now();
 
-              // console.log("new", currentPost);
-              newTempPost = currentPost;
+          async.each(currentPage.posts, (currentPost, callback) => {
+              tel++;
+              currentPosts.push(currentPost);
+              if (currentPost.postOrder == req.body.postOrder) {
+                // console.log(currentPost);
+                console.log("tel:", tel);
+                juistetel = tel;
+                let body = req.body;
+                if (body.postTitle != null) {
+                  currentPost.postTitle = body.postTitle;
+                }
+                if (body.postText != null) {
+                  currentPost.postText = body.postText;
+                }
+                if (body.postPhotos != null) {
+                  currentPost.postType = body.postType;
+                  currentPost.postPhotos = body.postPhotos;
+                  //problemen voor later?
+                }
+                // console.log(Date.now());
+                currentPost.postDate = Date.now();
+
+                // console.log("new", currentPost);
+                newTempPost = currentPost;
+              }
+              callback();
+            },
+            //na async.each middel
+            (err) => {
+              if (err) res.json(err);
+              // console.log('binnenste async gedaan');
             }
-            callback();
-          },
-          //na async.each middel
-          (err) => {
-            if (err) res.json(err);
-            // console.log('binnenste async gedaan');
-          }
-        );
-      }
+          );
+        }
         callback();
       },
       //na async.each
