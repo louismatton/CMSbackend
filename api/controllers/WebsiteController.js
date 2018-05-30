@@ -77,6 +77,45 @@ exports.update_a_website = function (req, res) {
   });
 };
 
+exports.delete_page = function (req, res) {
+  console.log("websitecontroller delete_page");
+
+  Website.findOne({
+    userId: req.user._id
+  }, function (err, currentWebsite) {
+    if (err) res.send(err);
+    var currentPages = Array();
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+
+        if (currentPage.pageOrder > req.body.pageOrder) {
+          currentPage.pageOrder--;
+          currentPages.push(currentPage);
+        }
+        if (currentPage.pageOrder < req.body.pageOrder) {
+          currentPages.push(currentPage);
+        }
+        callback();
+      },
+      //na async.each
+      (err) => {
+        if (err) res.json(err);
+        Website.findOneAndUpdate({
+          userId: req.user._id,
+        }, {
+          pages: currentPages
+        }, {
+          new: true
+        }).exec((err, changedWebsite) => {
+          if (err) console.log(err);
+          console.log(changedWebsite);
+          // console.log(changedWebsite.pages[0].posts);
+          res.json(changedWebsite);
+        });
+      }
+    )
+  });
+};
+
 exports.delete_post = function (req, res) {
   // delete post en verander postOrders
   console.log("websitecontroller delete_post");
@@ -88,9 +127,7 @@ exports.delete_post = function (req, res) {
     var currentPosts = Array();
     async.each(currentWebsite.pages, (currentPage, callback) => {
         if (currentPage.pageOrder == req.body.pageOrder) {
-
           async.each(currentPage.posts, (currentPost, callback) => {
-
               if (currentPost.postOrder > req.body.postOrder) {
                 currentPost.postOrder--;
                 currentPosts.push(currentPost);
@@ -130,7 +167,6 @@ exports.delete_post = function (req, res) {
       }
     )
   });
-
 };
 
 

@@ -86,4 +86,8 @@ module.exports = function (app) {
 
     app.route('/website/deletepost')
         .post(requireAuth, websiteController.delete_post);
-};
+
+    app.route('/website/deletepage')
+        .post(requireAuth, websiteController.delete_page);
+    
+    };
