@@ -67,6 +67,13 @@ module.exports = function (app) {
         .post(userController.create_a_user)
         .get(requireAuth, userController.list_all_users);
 
+    app.route('/website/:websiteTitle')
+        .get(websiteController.list_website_by_name)
+
+    app.route('/website/:websiteTitle/:pageTitle')
+        .get(websiteController.list_website_by_name_page)
+
+
     app.route('/website')
         .get(requireAuth, websiteController.list_own_website)
         .post(requireAuth, websiteController.create_a_website);

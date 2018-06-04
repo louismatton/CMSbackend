@@ -24,6 +24,40 @@ exports.list_own_website = function (req, res) {
   });
 };
 
+exports.list_website_by_name = function (req, res) {
+  console.log("websitecontroller " + "list_website_by_name");
+
+  Website.findOne({
+    title: req.params.websiteTitle
+  }, function(err, website) {
+      if (err)
+        res.send(err);
+      res.json(website);
+    });
+};
+exports.list_website_by_name_page = function (req, res) {
+  console.log("websitecontroller " + "list_website_by_name_page");
+  console.log(req.params.pageName);
+
+  Website.findOne({
+    title: req.params.websiteTitle
+  }, function (err, currentWebsite) {
+    if (err) res.send(err);
+    var currentPages = Array();
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+      if(currentPage.pageTitle.toLowerCase()==req.params.pageTitle.toLowerCase()){
+        res.json(currentPage)
+      }
+      callback();
+      },
+      //na async.each
+      (err) => {
+        if (err) res.json(err);
+      }
+    )
+  });
+};
+
 exports.create_a_website = function (req, res) {
   var page, post;
   var arrpages = [];

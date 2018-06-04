@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var WebsiteSchema = new Schema({
     title: {
         type: String,
-        required: 'enter the name of the page'
+        required: 'enter the name of the website'
     },
     userId: {
         type: String,
@@ -15,7 +15,7 @@ var WebsiteSchema = new Schema({
         type: [{
             pageTitle: {
                 type: String,
-                required: 'Enter the name of the post'
+                required: 'Enter the name of the page'
             },
             createdDate: {
                 type: Date,
@@ -28,14 +28,12 @@ var WebsiteSchema = new Schema({
             posts: {
                 type: [{
                     postTitle: {
-                        type: String
-                        // ,
-                        // required: 'Enter a posttitle'
+                        type: String,
+                        required: 'Enter a posttitle'
                     },
                     postText: {
-                        type: String
-                        // ,
-                        // required: 'Enter text'
+                        type: String,
+                        required: 'Enter text'
                     },
                     postPhotos: {
                         type: [{
