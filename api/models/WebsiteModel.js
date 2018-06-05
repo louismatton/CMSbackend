@@ -25,6 +25,10 @@ var WebsiteSchema = new Schema({
                 type: Number,
                 required: true
             },
+            pageVisible:{
+                type: Boolean,
+                default:true
+            },
             posts: {
                 type: [{
                     postTitle: {
@@ -54,6 +58,10 @@ var WebsiteSchema = new Schema({
                         type: Number
                         // ,
                         // required: true
+                    },
+                    postVisible:{
+                        type: Boolean,
+                        default:true
                     }
                 }]
             }

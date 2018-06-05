@@ -96,5 +96,12 @@ module.exports = function (app) {
 
     app.route('/website/deletepage')
         .post(requireAuth, websiteController.delete_page);
+        
+    app.route('/website/visPage')
+        .post(requireAuth, websiteController.update_page_visibility);
     
+    app.route('/website/visPost')
+        .post(requireAuth, websiteController.update_post_visibility);
+
+
     };

@@ -29,11 +29,11 @@ exports.list_website_by_name = function (req, res) {
 
   Website.findOne({
     title: req.params.websiteTitle
-  }, function(err, website) {
-      if (err)
-        res.send(err);
-      res.json(website);
-    });
+  }, function (err, website) {
+    if (err)
+      res.send(err);
+    res.json(website);
+  });
 };
 exports.list_website_by_name_page = function (req, res) {
   console.log("websitecontroller " + "list_website_by_name_page");
@@ -45,10 +45,10 @@ exports.list_website_by_name_page = function (req, res) {
     if (err) res.send(err);
     var currentPages = Array();
     async.each(currentWebsite.pages, (currentPage, callback) => {
-      if(currentPage.pageTitle.toLowerCase()==req.params.pageTitle.toLowerCase()){
-        res.json(currentPage)
-      }
-      callback();
+        if (currentPage.pageTitle.toLowerCase() == req.params.pageTitle.toLowerCase()) {
+          res.json(currentPage)
+        }
+        callback();
       },
       //na async.each
       (err) => {
@@ -142,6 +142,53 @@ exports.delete_page = function (req, res) {
         }).exec((err, changedWebsite) => {
           if (err) console.log(err);
           console.log(changedWebsite);
+          // console.log(changedWebsite.pages[0].posts);
+          res.json(changedWebsite);
+        });
+      }
+    )
+  });
+};
+
+exports.update_page_visibility = function (req, res) {
+  console.log("websitecontroller update_page_visibility");
+  console.log(req.body);
+
+  Website.findOne({
+    userId: req.user._id
+  }, function (err, currentWebsite) {
+    if (err) res.send(err);
+    var currentPages = Array();
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+        if (currentPage.pageOrder == req.body.pageOrder) {
+          // console.log(true);
+          if (currentPage.pageVisible == true) {
+            currentPage.pageVisible = false;
+            // console.log(currentPage);
+          } else {
+            console.log(false);
+            
+            currentPage.pageVisible = true;
+          }
+
+          // console.log(currentPage);
+        }
+        currentPages.push(currentPage);
+
+        callback();
+      },
+      //na async.each
+      (err) => {
+        if (err) res.json(err);
+        Website.findOneAndUpdate({
+          userId: req.user._id,
+        }, {
+          pages: currentPages
+        }, {
+          new: true
+        }).exec((err, changedWebsite) => {
+          if (err) console.log(err);
+          // console.log(changedWebsite);
           // console.log(changedWebsite.pages[0].posts);
           res.json(changedWebsite);
         });
@@ -280,6 +327,69 @@ exports.update_a_post = function (req, res) {
         }).exec((err, changedWebsite) => {
           if (err) console.log(err);
           console.log(changedWebsite);
+          // console.log(changedWebsite.pages[0].posts);
+          res.json(changedWebsite);
+        });
+      }
+    )
+  });
+}
+
+exports.update_post_visibility = function (req, res) {
+  //post per order, title, text, (type en fotos) worden meegegeven
+  //controle juiste pagina!!!!
+  console.log("websitecontroller update_post_vis");
+
+  Website.findOne({
+    userId: req.user._id
+  }, function (err, currentWebsite) {
+    if (err) res.send(err);
+    let newTempPost, juistetel;
+    var currentPosts = Array();
+    let tel;
+    async.each(currentWebsite.pages, (currentPage, callback) => {
+        tel = -1;
+        if (currentPage.pageOrder == req.body.pageOrder) {
+
+          async.each(currentPage.posts, (currentPost, callback) => {
+              tel++;
+              if (currentPost.postOrder == req.body.postOrder) {
+                
+                if (currentPost.postVisible == true) {
+                  currentPost.postVisible = false;
+                } else {
+                  currentPost.postVisible = true;
+                }
+                
+                currentPost.postDate = Date.now();
+                
+                console.log("***", currentPost);
+                newTempPost = currentPost;
+              }
+              currentPosts.push(currentPost);
+              callback();
+            },
+            //na async.each middel
+            (err) => {
+              if (err) res.json(err);
+            }
+          );
+        }
+        callback();
+      },
+      //na async.each
+      (err) => {
+        if (err) res.json(err);
+        Website.findOneAndUpdate({
+          userId: req.user._id,
+          "pages.pageOrder": req.body.pageOrder
+        }, {
+          "pages.$.createdDate": Date.now(),
+          "pages.$.posts": currentPosts
+        }, {
+          new: true
+        }).exec((err, changedWebsite) => {
+          if (err) console.log(err);
           // console.log(changedWebsite.pages[0].posts);
           res.json(changedWebsite);
         });
