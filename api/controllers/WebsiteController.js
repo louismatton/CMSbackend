@@ -167,7 +167,7 @@ exports.update_page_visibility = function (req, res) {
             // console.log(currentPage);
           } else {
             console.log(false);
-            
+
             currentPage.pageVisible = true;
           }
 
@@ -354,15 +354,15 @@ exports.update_post_visibility = function (req, res) {
           async.each(currentPage.posts, (currentPost, callback) => {
               tel++;
               if (currentPost.postOrder == req.body.postOrder) {
-                
+
                 if (currentPost.postVisible == true) {
                   currentPost.postVisible = false;
                 } else {
                   currentPost.postVisible = true;
                 }
-                
+
                 currentPost.postDate = Date.now();
-                
+
                 console.log("***", currentPost);
                 newTempPost = currentPost;
               }
@@ -438,11 +438,10 @@ exports.add_post = function (req, res) {
         if (err) res.json(err);
         // console.log('buitenste async gedaan');
         // currentPosts.splice(juistetel, 1);
-        console.log(req.body.postPhotos)
-        console.log(req.body.postPhotos.length);
+
         let newPost;
-        if(req.body.postPhotos==null){
-          console.log("noPhoto");          
+        if (req.body.postPhotos == null) {
+          console.log("noPhoto");
           newPost = {
             'postTitle': req.body.postTitle,
             'postText': req.body.postText,
@@ -451,21 +450,21 @@ exports.add_post = function (req, res) {
             'postOrder': juistetel++
           };
 
-        }else if(req.body.postPhotos.length==1){
+        } else if (req.body.postPhotos.length == 1) {
           console.log("singlePhoto");
           newPost = {
             'postTitle': req.body.postTitle,
-            'postText': req.body.postText,            
+            'postText': req.body.postText,
             'postPhotos': req.body.postPhotos,
             'postType': "singlePhoto",
             'postOrder': juistetel++
           };
-        }else{
+        } else {
           console.log("multiplePhoto");
           newPost = {
             'postTitle': req.body.postTitle,
             'postText': req.body.postText,
-            'postPhotos': req.body.postPhotos,            
+            'postPhotos': req.body.postPhotos,
             'postType': "multiplePhotos",
             'postOrder': juistetel++
           };
@@ -482,7 +481,7 @@ exports.add_post = function (req, res) {
           new: true
         }).exec((err, changedWebsite) => {
           if (err) console.log(err);
-          console.log(changedWebsite);
+          // console.log(changedWebsite);
           // console.log(changedWebsite.pages[0].posts);
           res.json(changedWebsite);
         });
