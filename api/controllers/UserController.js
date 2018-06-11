@@ -3,8 +3,8 @@
 let mongoose = require('mongoose'),
   async = require('async'),
   User = mongoose.model('Users');
-  
-  // tokenController = require('./TokenController')
+
+// tokenController = require('./TokenController')
 
 
 exports.list_all_users = (req, res) => {
@@ -32,7 +32,9 @@ exports.create_a_user = (req, res) => {
     if (err) {
       return res.status(400).send(err);
     }
-    res.json({ message: 'new user added!'});
+    res.json({
+      message: 'new user added!'
+    });
     // tokenController.createToken(req, res);
   });
 };
@@ -69,26 +71,27 @@ exports.read_a_user_with_join = (req, res) => {
     }
     if (user) {
       user.numberOfFriends = user.friends.length;
-      Wishlist.findOne({ userId: req.params.userId }).exec((err, wishlist) => {
+      Wishlist.findOne({
+        userId: req.params.userId
+      }).exec((err, wishlist) => {
         if (err) {
           res.send(err);
         }
-        DrunkenBeer.findOne({ userId: req.params.userId }).exec((err, drunkenbeer) => {
+        DrunkenBeer.findOne({
+          userId: req.params.userId
+        }).exec((err, drunkenbeer) => {
           if (err) {
             res.send(err);
           }
           if (drunkenbeer && wishlist) {
             res.send(Object.assign(drunkenbeer.toObject(), wishlist.toObject(), user.toObject()));
-          }
-          else {
+          } else {
             if (drunkenbeer) {
               res.send(Object.assign(drunkenbeer.toObject(), user.toObject()));
-            }
-            else {
+            } else {
               if (wishlist) {
                 res.send(Object.assign(wishlist.toObject(), user.toObject()));
-              }
-              else {
+              } else {
                 res.json(user);
               }
             }
@@ -97,9 +100,11 @@ exports.read_a_user_with_join = (req, res) => {
         })
 
       })
-    }
-    else{
-      res.json({ success: false, msg: "User not found."})
+    } else {
+      res.json({
+        success: false,
+        msg: "User not found."
+      })
     }
 
 
@@ -112,50 +117,48 @@ exports.update_a_user = (req, res) => {
   User.findOneAndUpdate({
     _id: req.params.userId
   }, req.body, {
-      new: true
-    }).exec((err, user) => {
-      if (err)
-        res.send(err);
-      res.json(user);
-    });
+    new: true
+  }).exec((err, user) => {
+    if (err)
+      res.send(err);
+    res.json(user);
+  });
 };
 
 exports.find_a_user = (req, res) => {
-     let naamvoorsplit=req.params.name;
-    let naam = [];
-    naam = naamvoorsplit.split(" ");
+  let naamvoorsplit = req.params.name;
+  let naam = [];
+  naam = naamvoorsplit.split(" ");
 
-  if(naam[1]!=undefined){
-    User.find(
-      {$or:
-        [{
-            firstname: {
-              $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
-            }
-          },{
-            firstname: {
-              $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
-            }
-          },
-          {
-            lastname: {
-              $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
-            }
-          },{
-            lastname: {
-              $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
-            }
+  if (naam[1] != undefined) {
+    User.find({
+      $or: [{
+          firstname: {
+            $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
           }
-        ]
+        }, {
+          firstname: {
+            $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
+          }
+        },
+        {
+          lastname: {
+            $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
+          }
+        }, {
+          lastname: {
+            $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
+          }
+        }
+      ]
     }).exec((err, users) => {
       if (err)
         res.send(err);
       res.json(users);
     });
-  }else{
-      User.find(
-    {$or:
-      [{
+  } else {
+    User.find({
+      $or: [{
           firstname: {
             $regex: new RegExp("^" + req.params.name.toLowerCase(), "i")
           }
@@ -166,11 +169,11 @@ exports.find_a_user = (req, res) => {
           }
         }
       ]
-  }).exec((err, users) => {
-    if (err)
-      res.send(err);
-    res.json(users);
-  });
+    }).exec((err, users) => {
+      if (err)
+        res.send(err);
+      res.json(users);
+    });
   }
 
 };
@@ -190,20 +193,24 @@ exports.delete_a_user = (req, res) => {
 
 exports.friends_by_userid = (req, res) => {
   let arrFriends = [];
-  User.find({ _id: req.params.userId }).exec((err, user) => {
+  User.find({
+    _id: req.params.userId
+  }).exec((err, user) => {
     if (err) {
       res.send(err);
     }
     async.each(user[0].friends, (friendid, callback) => {
-      User.find({ _id: friendid }).exec((err, friend) => {
-        if (err) {
-          callback(err);
-        }
-        arrFriends.push(friend[0]);
-        callback();
-      })
-    },
-      (err)=> {
+        User.find({
+          _id: friendid
+        }).exec((err, friend) => {
+          if (err) {
+            callback(err);
+          }
+          arrFriends.push(friend[0]);
+          callback();
+        })
+      },
+      (err) => {
         if (err) {
           res.send(err)
         }

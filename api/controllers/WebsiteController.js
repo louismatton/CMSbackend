@@ -438,13 +438,38 @@ exports.add_post = function (req, res) {
         if (err) res.json(err);
         // console.log('buitenste async gedaan');
         // currentPosts.splice(juistetel, 1);
-        let newPost = {
-          'postTitle': req.body.postTitle,
-          'postText': req.body.postText,
-          'postPhotos': ["foto1", "foto2"],
-          'postType': "multiplePhotos",
-          'postOrder': juistetel++
-        };
+        console.log(req.body.postPhotos)
+        console.log(req.body.postPhotos.length);
+        let newPost;
+        if(req.body.postPhotos==null){
+          console.log("noPhoto");          
+          newPost = {
+            'postTitle': req.body.postTitle,
+            'postText': req.body.postText,
+            // 'postPhotos': req.body.postPhotos,
+            'postType': "noPhoto",
+            'postOrder': juistetel++
+          };
+
+        }else if(req.body.postPhotos.length==1){
+          console.log("singlePhoto");
+          newPost = {
+            'postTitle': req.body.postTitle,
+            'postText': req.body.postText,            
+            'postPhotos': req.body.postPhotos,
+            'postType': "singlePhoto",
+            'postOrder': juistetel++
+          };
+        }else{
+          console.log("multiplePhoto");
+          newPost = {
+            'postTitle': req.body.postTitle,
+            'postText': req.body.postText,
+            'postPhotos': req.body.postPhotos,            
+            'postType': "multiplePhotos",
+            'postOrder': juistetel++
+          };
+        }
         currentPosts.push(newPost);
         // console.log(currentPosts);
         Website.findOneAndUpdate({

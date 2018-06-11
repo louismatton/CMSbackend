@@ -1,8 +1,5 @@
 // 'use strict';
-var todoList = require('../controllers/test1controller');
 var websiteController = require('../controllers/WebsiteController');
-
-var pageController = require('../controllers/PageController');
 var userController = require('../controllers/UserController');
 var authController = require('../controllers/AuthController');
 
@@ -50,18 +47,6 @@ module.exports = function (app) {
 
     // Set url for API group routes
     // app.use('/api', apiRoutes);
-
-    // todoList Routes
-    app.route('/tasks')
-        .get(requireAuth, todoList.list_all_tasks)
-        // .get(authController.isAuthenticated, todoList.list_all_tasks)
-        .post(authController.isAuthenticated, todoList.create_a_task);
-
-
-    app.route('/tasks/:taskId')
-        .get(todoList.read_a_task)
-        .put(todoList.update_a_task)
-        .delete(todoList.delete_a_task);
 
     app.route('/users')
         .post(userController.create_a_user)
