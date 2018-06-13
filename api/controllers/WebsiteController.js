@@ -61,21 +61,21 @@ exports.list_website_by_name_page = function (req, res) {
 exports.create_a_website = function (req, res) {
   var page, post;
   var arrpages = [];
-  var posts = [];
-  post = {
-    'postTitle': "post1",
-    'postText': "tekst",
-    'postPhotos': ["foto1", "foto2"],
-    'postType': "multiplePhotos",
-    'postOrder': 1
-  };
-  posts.push(post);
-  page = {
-    'pageTitle': "pagina1",
-    'pageOrder': 1,
-    'posts': posts
-  };
-  arrpages.push(page);
+  // var posts = [];
+  // post = {
+  //   'postTitle': "post1",
+  //   'postText': "tekst",
+  //   'postPhotos': ["foto1", "foto2"],
+  //   'postType': "multiplePhotos",
+  //   'postOrder': 1
+  // };
+  // posts.push(post);
+  // page = {
+  //   'pageTitle': "pagina1",
+  //   'pageOrder': 1,
+  //   'posts': posts
+  // };
+  // arrpages.push(page);
 
   var new_website = new Website({
     title: "website1",
@@ -269,7 +269,6 @@ exports.update_a_post = function (req, res) {
         tel = -1;
         if (currentPage.pageOrder == req.body.pageOrder) {
 
-
           async.each(currentPage.posts, (currentPost, callback) => {
               tel++;
               currentPosts.push(currentPost);
@@ -285,14 +284,11 @@ exports.update_a_post = function (req, res) {
                   currentPost.postText = body.postText;
                 }
                 if (body.postPhotos != null) {
-                  currentPost.postType = body.postType;
                   currentPost.postPhotos = body.postPhotos;
                   //problemen voor later?
                 }
-                // console.log(Date.now());
                 currentPost.postDate = Date.now();
 
-                // console.log("new", currentPost);
                 newTempPost = currentPost;
               }
               callback();

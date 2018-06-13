@@ -22,7 +22,7 @@ let UserSchema = new Schema({
     },
     image: {
         type: String
-        // required: 'Img url'
+        // url of base 64 encoded
     },
     // role: {
     //   type: String,
@@ -32,10 +32,6 @@ let UserSchema = new Schema({
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date }
   }
-//   ,
-//   {
-//     timestamps: true
-//   }
 );
 
 // Execute before each user.save() call

@@ -21,9 +21,7 @@ module.exports = function (app) {
 
     // Constants for role types
     const REQUIRE_ADMIN = "Admin",
-        REQUIRE_OWNER = "Owner",
-        REQUIRE_CLIENT = "Client",
-        REQUIRE_MEMBER = "Member";
+        REQUIRE_CLIENT = "Client";
 
     //=========================
     // Auth Routes

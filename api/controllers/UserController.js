@@ -8,7 +8,6 @@ let mongoose = require('mongoose'),
 
 
 exports.list_all_users = (req, res) => {
-
   User.find({}).exec((err, users) => {
     if (err)
       res.send(err);
@@ -18,9 +17,7 @@ exports.list_all_users = (req, res) => {
 };
 
 
-
 exports.create_a_user = (req, res) => {
-
   let user = new User({
     email: req.body.email,
     password: req.body.password,
@@ -64,53 +61,6 @@ exports.create_a_user = (req, res) => {
 // };
 
 
-exports.read_a_user_with_join = (req, res) => {
-  User.findById(req.params.userId).exec((err, user) => {
-    if (err) {
-      res.send(err);
-    }
-    if (user) {
-      user.numberOfFriends = user.friends.length;
-      Wishlist.findOne({
-        userId: req.params.userId
-      }).exec((err, wishlist) => {
-        if (err) {
-          res.send(err);
-        }
-        DrunkenBeer.findOne({
-          userId: req.params.userId
-        }).exec((err, drunkenbeer) => {
-          if (err) {
-            res.send(err);
-          }
-          if (drunkenbeer && wishlist) {
-            res.send(Object.assign(drunkenbeer.toObject(), wishlist.toObject(), user.toObject()));
-          } else {
-            if (drunkenbeer) {
-              res.send(Object.assign(drunkenbeer.toObject(), user.toObject()));
-            } else {
-              if (wishlist) {
-                res.send(Object.assign(wishlist.toObject(), user.toObject()));
-              } else {
-                res.json(user);
-              }
-            }
-
-          }
-        })
-
-      })
-    } else {
-      res.json({
-        success: false,
-        msg: "User not found."
-      })
-    }
-
-
-
-  });
-};
 
 
 exports.update_a_user = (req, res) => {
@@ -125,58 +75,6 @@ exports.update_a_user = (req, res) => {
   });
 };
 
-exports.find_a_user = (req, res) => {
-  let naamvoorsplit = req.params.name;
-  let naam = [];
-  naam = naamvoorsplit.split(" ");
-
-  if (naam[1] != undefined) {
-    User.find({
-      $or: [{
-          firstname: {
-            $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
-          }
-        }, {
-          firstname: {
-            $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
-          }
-        },
-        {
-          lastname: {
-            $regex: new RegExp("^" + naam[1].toLowerCase(), "i")
-          }
-        }, {
-          lastname: {
-            $regex: new RegExp("^" + naam[0].toLowerCase(), "i")
-          }
-        }
-      ]
-    }).exec((err, users) => {
-      if (err)
-        res.send(err);
-      res.json(users);
-    });
-  } else {
-    User.find({
-      $or: [{
-          firstname: {
-            $regex: new RegExp("^" + req.params.name.toLowerCase(), "i")
-          }
-        },
-        {
-          lastname: {
-            $regex: new RegExp("^" + req.params.name.toLowerCase(), "i")
-          }
-        }
-      ]
-    }).exec((err, users) => {
-      if (err)
-        res.send(err);
-      res.json(users);
-    });
-  }
-
-};
 
 exports.delete_a_user = (req, res) => {
   User.remove({
@@ -190,32 +88,3 @@ exports.delete_a_user = (req, res) => {
   });
 };
 
-
-exports.friends_by_userid = (req, res) => {
-  let arrFriends = [];
-  User.find({
-    _id: req.params.userId
-  }).exec((err, user) => {
-    if (err) {
-      res.send(err);
-    }
-    async.each(user[0].friends, (friendid, callback) => {
-        User.find({
-          _id: friendid
-        }).exec((err, friend) => {
-          if (err) {
-            callback(err);
-          }
-          arrFriends.push(friend[0]);
-          callback();
-        })
-      },
-      (err) => {
-        if (err) {
-          res.send(err)
-        }
-
-        res.send(arrFriends);
-      })
-  });
-};

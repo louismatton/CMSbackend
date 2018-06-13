@@ -56,7 +56,7 @@ function setUserInfo(request) {
     _id: request._id,
     name: request.name,
     email: request.email,
-    image:request.image,
+    image: request.image,
     role: request.role,
   };
 }
